@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {HelloService} from './shared/services/hello.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'sugar-shack-root',
   standalone: true,
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
@@ -10,4 +11,15 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'sugar-shack-ui';
+
+  constructor(
+    private helloService: HelloService
+  ) {
+  }
+
+
+  onHello() {
+    console.log("component");
+    this.helloService.sayHi().subscribe();
+  }
 }

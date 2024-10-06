@@ -1,0 +1,7 @@
+$componentName: app;
+
+.#{$componentName} {
+  &__main-menu {
+    color: red;
+  }
+}
