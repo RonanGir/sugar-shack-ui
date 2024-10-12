@@ -1,0 +1,9 @@
+<form [formGroup]="quantityForm" (ngSubmit)="onSubmit()" class="change-quantity__form">
+  <mat-form-field ngDefaultControl [formControl]="quantityForm.controls.quantity">
+    <input type="number" [placeholder]="String(_quantity)" matInput class="change-quantity__form__input">
+  </mat-form-field>
+  <button mat-button class="change-quantity__form__button" color="primary" type="submit">
+    <mat-icon>{{ icon }}</mat-icon>
+  </button>
+</form>
+

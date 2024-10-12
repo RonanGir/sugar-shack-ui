@@ -8,3 +8,13 @@ export interface CatalogueItemModel {
   maxQty: number;
   type: TypeEnum
 }
+
+
+export interface ProductOrderItemModel {
+  description: string;
+  image: string;
+  name: string;
+}
+
+
+

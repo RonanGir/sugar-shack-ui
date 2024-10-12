@@ -1,0 +1,14 @@
+$componentName: change-quantity;
+
+.#{$componentName} {
+  &__form {
+    &__table {
+      &__actions {
+        &__cell {
+          display: flex !important;
+          align-items: center !important;
+        }
+      }
+    }
+  }
+}

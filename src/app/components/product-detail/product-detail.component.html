@@ -1,1 +1,11 @@
-<p>product-detail works!</p>
+<section class="product-detail__container">
+  <div class="product-detail__container__image-container">
+    <img class="product-detail__container__image-container__image" [src]="product?.image" [alt]="product?.name"/>
+  </div>
+  <div class="product-detail__container__description">
+    <h2>{{ product?.name }}</h2>
+    <p>{{ product?.description }}</p>
+    <p>{{ product?.price }} $ CA</p>
+    <p>{{ product?.type | mapleSyrupType }}</p>
+  </div>
+</section>

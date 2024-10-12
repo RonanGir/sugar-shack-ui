@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080/maple-orders",
+      "url": "http://localhost:8080",
       "description": "Generated server url"
     }
   ],
@@ -36,7 +36,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CartLineDto"
+                    "$ref": "#/components/schemas/CartItemDto"
                   }
                 }
               }
@@ -195,6 +195,37 @@
         }
       }
     },
+    "/maple-orders/public/api/cart/create": {
+      "post": {
+        "tags": [
+          "cart-controller"
+        ],
+        "operationId": "createCart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/maple-orders/public/api/products": {
       "get": {
         "tags": [
@@ -248,6 +279,40 @@
           }
         }
       }
+    },
+    "/maple-orders/public/api/order/customer/{id}": {
+      "get": {
+        "tags": [
+          "order-controller"
+        ],
+        "operationId": "getOrdersByUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -283,6 +348,103 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "CartDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPrice": {
+            "type": "number",
+            "format": "float"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPENED",
+              "PENDING",
+              "CLOSED"
+            ]
+          },
+          "customerDto": {
+            "$ref": "#/components/schemas/CustomerDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartItemDto"
+            }
+          }
+        }
+      },
+      "CartItemDto": {
+        "required": [
+          "cartId",
+          "image",
+          "name",
+          "price",
+          "productId",
+          "qty"
+        ],
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "productId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "cartId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "qty": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "CustomerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -366,16 +528,102 @@
           }
         }
       },
-      "CartLineDto": {
+      "OrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPrice": {
+            "type": "number",
+            "format": "float"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPENED",
+              "PENDING",
+              "CLOSED"
+            ]
+          },
+          "customerDto": {
+            "$ref": "#/components/schemas/CustomerDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemDto"
+            }
+          }
+        }
+      },
+      "OrderItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPrice": {
+            "type": "number",
+            "format": "float"
+          },
+          "productDto": {
+            "$ref": "#/components/schemas/ProductDto"
+          },
+          "orderId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "customerId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ProductDto": {
         "required": [
+          "description",
+          "id",
           "image",
           "name",
           "price",
-          "productId",
-          "qty"
+          "stock",
+          "type"
         ],
         "type": "object",
         "properties": {
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
           "image": {
             "type": "string"
           },
@@ -386,13 +634,29 @@
             "type": "number",
             "format": "double"
           },
-          "productId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "qty": {
+          "stock": {
             "type": "integer",
             "format": "int32"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "AMBER",
+              "DARK",
+              "CLEAR"
+            ]
+          },
+          "maxQty": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }

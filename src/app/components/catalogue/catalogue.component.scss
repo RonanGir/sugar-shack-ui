@@ -1,16 +1,35 @@
-.catalogue-container {
+$componentName: catalogue;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 0 3rem;
+.#{$componentName} {
+  &__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 
-  &__table {
-    width: 100%;
+    padding: 0 3rem;
 
-    &__image {
-      max-height: 5rem;
+    &__table {
+      margin-top: 1rem;
+      width: 100%;
+
+      &__image {
+        max-height: 5rem;
+      }
+
+      &__stock {
+        &__positive {
+          background-color: green;
+        }
+
+        &__limit {
+          background-color: orange;
+        }
+
+        &__negative {
+          background-color: red;
+        }
+      }
     }
   }
 }

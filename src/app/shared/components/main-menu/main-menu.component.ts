@@ -3,6 +3,7 @@ import {MatIcon} from "@angular/material/icon";
 import {MatToolbar, MatToolbarModule} from "@angular/material/toolbar";
 import {NgOptimizedImage} from '@angular/common';
 import {MatButtonModule} from '@angular/material/button';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-main-menu',
@@ -12,7 +13,8 @@ import {MatButtonModule} from '@angular/material/button';
     MatToolbar,
     NgOptimizedImage,
     MatButtonModule,
-    MatToolbarModule
+    MatToolbarModule,
+    RouterLink
   ],
   templateUrl: './main-menu.component.html',
   styleUrl: './main-menu.component.scss'
