@@ -6,7 +6,7 @@ import {OrderModel} from '../../shared/models/order.model';
 import {OrderService} from '../../shared/services/order.service';
 import {switchMap} from 'rxjs';
 import {OrderStatusPipe} from '../../shared/pipes/order-status.pipe';
-import {DatePipe} from '@angular/common';
+import {CurrencyPipe, DatePipe} from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -16,7 +16,8 @@ import {DatePipe} from '@angular/common';
     MatTableModule,
     MatTable,
     OrderStatusPipe,
-    DatePipe
+    DatePipe,
+    CurrencyPipe
   ],
   templateUrl: './customer-orders.component.html',
   styleUrl: './customer-orders.component.scss'
@@ -25,11 +26,11 @@ export class CustomerOrdersComponent implements OnInit {
 
   displayedColumns: string[] = ['id', 'totalPrice', 'status', 'updatedAt'];
   dataSource = new MatTableDataSource<OrderModel>([]);
-  private currentCustomer: number | undefined
+  private currentCustomer: number | undefined;
 
   constructor(
     private orderService: OrderService,
-    private customerService: CustomerService,
+    private customerService: CustomerService
   ) {
   }
 
@@ -38,7 +39,7 @@ export class CustomerOrdersComponent implements OnInit {
 
     this.customerService.getCurrentCustomer()
       .pipe(switchMap(customer => {
-          this.currentCustomer = customer
+          this.currentCustomer = customer;
           return this.orderService
             .getOrdersByCustomer(customer);
         }),

@@ -10,6 +10,7 @@ import {Router, RouterLink} from '@angular/router';
 import {OrderService} from '../../shared/services/order.service';
 import {CustomerService} from '../../shared/services/customer.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {CurrencyPipe} from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -20,7 +21,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
     MatButtonModule,
     MatIcon,
     ChangeQuantityComponent,
-    RouterLink
+    RouterLink,
+    CurrencyPipe
   ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss'
@@ -48,7 +50,7 @@ export class CartComponent implements OnInit {
       .subscribe((currentCart: number) => {
         this.cartId = currentCart;
         this.refreshItems(currentCart);
-      })
+      });
 
     this.customerService.getCurrentCustomer()
       .pipe(untilDestroyed(this))
@@ -57,18 +59,20 @@ export class CartComponent implements OnInit {
 
   onUpdateQuantity($event: { newQty: number, productId: number }) {
     this.cartService.changeQty($event.productId, 1, $event.newQty)
-      .pipe(untilDestroyed(this)).subscribe(() => {
-      if (this.cartId) {
-        this.refreshItems(this.cartId);
-      }
-    });
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        if (this.cartId) {
+          this.refreshItems(this.cartId);
+        }
+      });
   }
 
   onRemoveFromCart(element: CartItemModel) {
     this.cartService.removeFromCart(element.productId, element.cartId)
-      .pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshItems(element.cartId);
-    });
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.refreshItems(element.cartId);
+      });
   }
 
   onPlaceOrder() {
@@ -78,10 +82,10 @@ export class CartComponent implements OnInit {
         .subscribe(orderValidation => {
           if (!orderValidation.isOrderValid) {
             orderValidation.errors?.forEach(msg => {
-              this.openSnackBar(msg, "Let's go", {duration: 2000})
+              this.openSnackBar(msg, "Let's go", {duration: 2000});
             });
           } else {
-            this.openSnackBar("Commande validée", "'Fait Plaisir !", {duration: 1000})
+            this.openSnackBar("Commande validée", "'Fait Plaisir !", {duration: 1000});
             this.router.navigate(['/mes-commandes']);
           }
         });
@@ -90,23 +94,17 @@ export class CartComponent implements OnInit {
 
 
   private refreshItems(cartId: number) {
-    this.cartService.getCartItems(cartId).pipe(untilDestroyed(this)).subscribe(cartItems => {
-      this.dataSource.data = cartItems
-      this.subTotal = cartItems.reduce((accumulator, item) => accumulator + (item.price * item.qty),
-        0);
-    });
+    this.cartService.getCartItems(cartId)
+      .pipe(untilDestroyed(this))
+      .subscribe(cartItems => {
+        this.dataSource.data = cartItems;
+        this.subTotal = cartItems.reduce((accumulator, item) => accumulator + (item.price * item.qty),
+          0);
+      });
   }
 
-  openSnackBar(message
-                 :
-                 string, action
-                 :
-                 string, p0
-                 :
-                 {
-                   duration: number;
-                 }) {
-    this._snackBar.open(message, action);
+  openSnackBar(message: string, action: string, options: { duration: number }) {
+    this._snackBar.open(message, action, options);
   }
 
 }

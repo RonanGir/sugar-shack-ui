@@ -4,13 +4,15 @@ import {ActivatedRoute} from '@angular/router';
 import {ProductDetailModel} from '../../shared/models/product-detail.model';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 import {MapleSyrupTypePipe} from "../../shared/pipes/maple-syrup-type.pipe";
+import {CurrencyPipe} from '@angular/common';
 
 @UntilDestroy()
 @Component({
   selector: 'app-product-detail',
   standalone: true,
   imports: [
-    MapleSyrupTypePipe
+    MapleSyrupTypePipe,
+    CurrencyPipe
   ],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss'

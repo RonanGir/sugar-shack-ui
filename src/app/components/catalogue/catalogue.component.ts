@@ -10,6 +10,7 @@ import {CartService} from '../../shared/services/cart.service';
 import {CustomerService} from '../../shared/services/customer.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapleSyrupTypePipe} from '../../shared/pipes/maple-syrup-type.pipe';
+import {CurrencyPipe} from '@angular/common';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +22,8 @@ import {MapleSyrupTypePipe} from '../../shared/pipes/maple-syrup-type.pipe';
     MatIcon,
     MatChip,
     MatChipSet,
-    MapleSyrupTypePipe
+    MapleSyrupTypePipe,
+    CurrencyPipe
   ],
   templateUrl: './catalogue.component.html',
   styleUrl: './catalogue.component.scss'
@@ -30,7 +32,7 @@ export class CatalogueComponent implements OnInit {
 
   displayedColumns: string[] = ['image', 'name', 'price', 'maxQty', 'type', 'actions'];
   dataSource = new MatTableDataSource<CatalogueItemModel>([]);
-  private currentCustomer: number | undefined
+  private currentCustomer: number | undefined;
 
   constructor(
     private productService: ProductService,
@@ -46,7 +48,7 @@ export class CatalogueComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(catalogueItems => {
         this.dataSource.data = catalogueItems;
-      })
+      });
 
     this.customerService.getCurrentCustomer()
       .pipe(untilDestroyed(this))
@@ -59,11 +61,11 @@ export class CatalogueComponent implements OnInit {
 
   onAddToCart(row: CatalogueItemModel) {
     if (!this.currentCustomer) {
-      console.error('user must be found !')
-      return
+      console.error('user must be found !');
+      return;
     }
-    const quantiy = 1
-    const cartId = 1
+    const quantiy = 1;
+    const cartId = 1;
     this.cartService.addToCart(Number(row.id), cartId, this.currentCustomer, quantiy).pipe(untilDestroyed(this)).subscribe();
   }
 

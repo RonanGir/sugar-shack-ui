@@ -24,9 +24,9 @@ export class OrderService {
       .pipe(map(orders => orders.map(order => {
         let date;
         if (order.updatedAt) {
-          date = new Date(order.updatedAt)
+          date = new Date(order.updatedAt);
         }
-        return ({...order, updatedAt: date, status: order.status as TransactionEnum})
+        return ({...order, updatedAt: date, status: order.status as TransactionEnum});
       })));
   }
 }
