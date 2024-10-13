@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatButtonModule} from "@angular/material/button";
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
@@ -9,8 +9,8 @@ import {ChangeQuantityComponent} from '../../shared/components/change-quantity/c
 import {Router, RouterLink} from '@angular/router';
 import {OrderService} from '../../shared/services/order.service';
 import {CustomerService} from '../../shared/services/customer.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
 import {CurrencyPipe} from '@angular/common';
+import {SnackbarService} from '../../shared/services/snackbar.service';
 
 @UntilDestroy()
 @Component({
@@ -33,12 +33,12 @@ export class CartComponent implements OnInit {
   subTotal: number = 0;
   cartId: number | undefined;
   userId: number | undefined;
-  private _snackBar = inject(MatSnackBar);
 
   constructor(
     private cartService: CartService,
     private orderService: OrderService,
     private customerService: CustomerService,
+    private snackBarService: SnackbarService,
     private router: Router
   ) {
   }
@@ -81,11 +81,13 @@ export class CartComponent implements OnInit {
         .pipe(untilDestroyed(this))
         .subscribe(orderValidation => {
           if (!orderValidation.isOrderValid) {
-            orderValidation.errors?.forEach(msg => {
-              this.openSnackBar(msg, "Let's go", {duration: 2000});
+            orderValidation.errors?.forEach((msg, index) => {
+              setTimeout(() => {
+                this.snackBarService.open(msg, "Let's go", {duration: 1000});
+              }, index * 1000);
             });
           } else {
-            this.openSnackBar("Commande validée", "'Fait Plaisir !", {duration: 1000});
+            this.snackBarService.open("Commande validée", "'Fait Plaisir !", {duration: 1000});
             this.router.navigate(['/mes-commandes']);
           }
         });
@@ -101,10 +103,6 @@ export class CartComponent implements OnInit {
         this.subTotal = cartItems.reduce((accumulator, item) => accumulator + (item.price * item.qty),
           0);
       });
-  }
-
-  openSnackBar(message: string, action: string, options: { duration: number }) {
-    this._snackBar.open(message, action, options);
   }
 
 }

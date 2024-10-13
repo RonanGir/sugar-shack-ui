@@ -11,6 +11,7 @@ import {CustomerService} from '../../shared/services/customer.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapleSyrupTypePipe} from '../../shared/pipes/maple-syrup-type.pipe';
 import {CurrencyPipe} from '@angular/common';
+import {SnackbarService} from '../../shared/services/snackbar.service';
 
 @UntilDestroy()
 @Component({
@@ -38,6 +39,7 @@ export class CatalogueComponent implements OnInit {
     private productService: ProductService,
     private customerService: CustomerService,
     private cartService: CartService,
+    private snackBarService: SnackbarService,
     private router: Router
   ) {
   }
@@ -66,7 +68,9 @@ export class CatalogueComponent implements OnInit {
     }
     const quantiy = 1;
     const cartId = 1;
-    this.cartService.addToCart(Number(row.id), cartId, this.currentCustomer, quantiy).pipe(untilDestroyed(this)).subscribe();
+    this.cartService.addToCart(Number(row.id), cartId, this.currentCustomer, quantiy)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.snackBarService.open("Produit ajouté", "Merci!", {duration: 1000}));
   }
 
 }
