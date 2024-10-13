@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-COPY dist/sugar-shack-ui/browser/ /usr/share/nginx/html/app/
+COPY dist/sugar-shack-ui/browser/* /var/www/sugar-shack/
 COPY conf/nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
