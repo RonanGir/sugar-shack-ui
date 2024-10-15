@@ -1,0 +1,6 @@
+{
+  "/maple-orders": {
+    "target": "http://host.internal.docker:8080",
+    "secure": false
+  }
+}

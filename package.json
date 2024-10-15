@@ -8,6 +8,7 @@
     "prestart": "npm run generate-maple-orders-client",
     "prebuild": "npm run generate-maple-orders-client",
     "build": "ng build",
+    "build:docker": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "generate-maple-orders-client": "rimraf generated/maple-orders-api && npx openapi-generator-cli generate -i src/openapi/maple-orders-api.json -g typescript-angular --type-mappings=set=Array -o generated/maple-orders-api --additional-properties basePath=\"\",ngVersion=18.2.7,fileNaming=kebab-case,serviceSuffix=Client,serviceFileSuffix=.client,supportsES6=true,apiModulePrefix=MapleOrders --generate-alias-as-model --skip-validate-spec"
