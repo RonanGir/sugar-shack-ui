@@ -1,17 +1,19 @@
 import {Component, OnInit} from '@angular/core';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatTableModule} from '@angular/material/table';
 import {MatIcon} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
-import {ProductService} from '../../shared/services/product.service';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {CatalogueItemModel} from '../../shared/models/catalogue-item.model';
 import {Router} from '@angular/router';
-import {CartService} from '../../shared/services/cart.service';
-import {CustomerService} from '../../shared/services/customer.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
-import {MapleSyrupTypePipe} from '../../shared/pipes/maple-syrup-type.pipe';
 import {CurrencyPipe} from '@angular/common';
-import {SnackbarService} from '../../shared/services/snackbar.service';
+import {catchError, EMPTY, Observable, of} from 'rxjs';
+import {MapleSyrupTypePipe} from '@shared-pipes/maple-syrup-type.pipe';
+import {CatalogueItemModel} from '@shared-models/catalogue-item.model';
+import {ProductService} from '@shared-services/product.service';
+import {CustomerService} from '@shared-services/customer.service';
+import {CartService} from '@shared-services/cart.service';
+import {ErrorService} from '@shared-services/error.service';
+import {SnackbarService} from '@shared-services/snackbar.service';
 
 @UntilDestroy()
 @Component({
@@ -32,26 +34,29 @@ import {SnackbarService} from '../../shared/services/snackbar.service';
 export class CatalogueComponent implements OnInit {
 
   displayedColumns: string[] = ['image', 'name', 'price', 'maxQty', 'type', 'actions'];
-  dataSource = new MatTableDataSource<CatalogueItemModel>([]);
+  dataSource$: Observable<CatalogueItemModel[]>;
   private currentCustomer: number | undefined;
 
   constructor(
     private productService: ProductService,
     private customerService: CustomerService,
     private cartService: CartService,
+    private errorService: ErrorService,
     private snackBarService: SnackbarService,
     private router: Router
   ) {
+    this.dataSource$ = this.productService
+      .getProductCatalogue()
+      .pipe(
+        catchError(err => {
+          this.errorService.handleError(err.error);
+          return of([]);
+        }),
+        untilDestroyed(this)
+      );
   }
 
   ngOnInit(): void {
-    this.productService
-      .getProductCatalogue()
-      .pipe(untilDestroyed(this))
-      .subscribe(catalogueItems => {
-        this.dataSource.data = catalogueItems;
-      });
-
     this.customerService.getCurrentCustomer()
       .pipe(untilDestroyed(this))
       .subscribe(customer => this.currentCustomer = customer);
@@ -69,8 +74,13 @@ export class CatalogueComponent implements OnInit {
     const quantiy = 1;
     const cartId = 1;
     this.cartService.addToCart(Number(row.id), cartId, this.currentCustomer, quantiy)
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.snackBarService.open("Produit ajouté", "Merci!", {duration: 1000}));
+      .pipe(
+        catchError(err => {
+          this.errorService.handleError(err.error);
+          return EMPTY;
+        }),
+        untilDestroyed(this))
+      .subscribe(() => this.snackBarService.showSuccess("Produit ajouté", "Merci!", {duration: 1000}));
   }
 
 }

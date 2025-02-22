@@ -1,10 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {ProductService} from '../../shared/services/product.service';
+import {Component} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ProductDetailModel} from '../../shared/models/product-detail.model';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {MapleSyrupTypePipe} from "../../shared/pipes/maple-syrup-type.pipe";
-import {CurrencyPipe} from '@angular/common';
+import {AsyncPipe, CurrencyPipe} from '@angular/common';
+import {MapleSyrupTypePipe} from '@shared-pipes/maple-syrup-type.pipe';
+import {ProductDetailModel} from '@shared-models/product-detail.model';
+import {ProductService} from '@shared-services/product.service';
+import {catchError, EMPTY, Observable} from 'rxjs';
+import {ErrorService} from '@shared-services/error.service';
 
 @UntilDestroy()
 @Component({
@@ -12,29 +14,29 @@ import {CurrencyPipe} from '@angular/common';
   standalone: true,
   imports: [
     MapleSyrupTypePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    AsyncPipe
   ],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss'
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent {
 
-  product: ProductDetailModel | undefined;
+  product$: Observable<ProductDetailModel>;
 
   constructor(
     private productService: ProductService,
+    private errorService: ErrorService,
     private route: ActivatedRoute
   ) {
-
-  }
-
-  ngOnInit(): void {
     const productId = this.route.snapshot.paramMap.get('productId');
-    if (!isNaN(Number(productId)))
-      this.productService.getProductDetail(Number(productId))
-        .pipe(untilDestroyed(this))
-        .subscribe(prod => this.product = prod);
+    this.product$ = this.productService.getProductDetail(Number(productId))
+      .pipe(
+        catchError(err => {
+          this.errorService.handleError(err.error);
+          return EMPTY;
+        }),
+        untilDestroyed(this));
   }
-
 
 }

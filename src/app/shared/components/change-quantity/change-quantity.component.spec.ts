@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ChangeQuantityComponent} from '@app/shared/components/change-quantity/change-quantity.component';
 
-import { ChangeQuantityComponent } from './change-quantity.component';
 
 describe('ChangeQuantityComponent', () => {
   let component: ChangeQuantityComponent;
@@ -8,9 +8,9 @@ describe('ChangeQuantityComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChangeQuantityComponent]
-    })
-    .compileComponents();
+        imports: [ChangeQuantityComponent]
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(ChangeQuantityComponent);
     component = fixture.componentInstance;

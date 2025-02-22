@@ -1,17 +1,21 @@
 import {Injectable} from '@angular/core';
-import {OrderControllerClient} from '@api/order-controller.client';
-import {map, Observable} from 'rxjs';
-import {OrderValidationModel} from '../models/order-validation.model';
-import {OrderModel} from '../models/order.model';
-import {TransactionEnum} from '../models/enums/transaction.enum';
+import {OrderControllerClient} from '@maple-orders-api/order-controller.client';
+import {map, Observable, switchMap} from 'rxjs';
+import {CustomerService} from '@shared-services/customer.service';
+import {OrderValidationModel} from '@shared-models/order-validation.model';
+import {OrderModel} from '@shared-models/order.model';
+import {TransactionEnum} from '@shared-models/enums/transaction.enum';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
 
+
   constructor(
-    private orderController: OrderControllerClient
+    private orderController: OrderControllerClient,
+    private customerService: CustomerService
   ) {
   }
 
@@ -28,5 +32,12 @@ export class OrderService {
         }
         return ({...order, updatedAt: date, status: order.status as TransactionEnum});
       })));
+  }
+
+  getCurrentCustomerOrder(): Observable<OrderModel[]> {
+    return this.customerService.getCurrentCustomer()
+      .pipe(switchMap(customer => {
+        return this.getOrdersByCustomer(customer);
+      }));
   }
 }

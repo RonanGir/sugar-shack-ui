@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
+import {ErrorService} from '@shared-services/error.service';
 
-import { ErrorService } from './error.service';
 
 describe('ErrorService', () => {
   let service: ErrorService;

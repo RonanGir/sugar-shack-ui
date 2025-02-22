@@ -2,15 +2,17 @@ import {Component, OnInit} from '@angular/core';
 import {MatButtonModule} from "@angular/material/button";
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
 import {MatIcon} from "@angular/material/icon";
-import {CartService} from '../../shared/services/cart.service';
-import {CartItemModel} from '../../shared/models/cart-item.model';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {ChangeQuantityComponent} from '../../shared/components/change-quantity/change-quantity.component';
 import {Router, RouterLink} from '@angular/router';
-import {OrderService} from '../../shared/services/order.service';
-import {CustomerService} from '../../shared/services/customer.service';
 import {CurrencyPipe} from '@angular/common';
-import {SnackbarService} from '../../shared/services/snackbar.service';
+import {catchError, EMPTY} from 'rxjs';
+import {ChangeQuantityComponent} from '@app/shared/components/change-quantity/change-quantity.component';
+import {CartService} from '@shared-services/cart.service';
+import {OrderService} from '@shared-services/order.service';
+import {CartItemModel} from '@shared-models/cart-item.model';
+import {CustomerService} from '@shared-services/customer.service';
+import {ErrorService} from '@shared-services/error.service';
+import {SnackbarService} from '@shared-services/snackbar.service';
 
 @UntilDestroy()
 @Component({
@@ -38,6 +40,7 @@ export class CartComponent implements OnInit {
     private cartService: CartService,
     private orderService: OrderService,
     private customerService: CustomerService,
+    private errorService: ErrorService,
     private snackBarService: SnackbarService,
     private router: Router
   ) {
@@ -46,6 +49,10 @@ export class CartComponent implements OnInit {
   ngOnInit(): void {
     this.cartService.getCurrentCart()
       .pipe(
+        catchError(err => {
+          this.errorService.handleError(err);
+          return EMPTY;
+        }),
         untilDestroyed(this))
       .subscribe((currentCart: number) => {
         this.cartId = currentCart;
@@ -53,13 +60,24 @@ export class CartComponent implements OnInit {
       });
 
     this.customerService.getCurrentCustomer()
-      .pipe(untilDestroyed(this))
+      .pipe(
+        catchError(err => {
+          this.errorService.handleError(err);
+          return EMPTY;
+        }),
+        untilDestroyed(this))
       .subscribe(user => this.userId = user);
   }
 
   onUpdateQuantity($event: { newQty: number, productId: number }) {
     this.cartService.changeQty($event.productId, 1, $event.newQty)
-      .pipe(untilDestroyed(this))
+      .pipe(
+        catchError(err => {
+          this.errorService.handleError(err);
+          return EMPTY;
+        }),
+        untilDestroyed(this)
+      )
       .subscribe(() => {
         if (this.cartId) {
           this.refreshItems(this.cartId);
@@ -69,7 +87,12 @@ export class CartComponent implements OnInit {
 
   onRemoveFromCart(element: CartItemModel) {
     this.cartService.removeFromCart(element.productId, element.cartId)
-      .pipe(untilDestroyed(this))
+      .pipe(
+        catchError(err => {
+          this.errorService.handleError(err);
+          return EMPTY;
+        }),
+        untilDestroyed(this))
       .subscribe(() => {
         this.refreshItems(element.cartId);
       });
@@ -83,11 +106,11 @@ export class CartComponent implements OnInit {
           if (!orderValidation.isOrderValid) {
             orderValidation.errors?.forEach((msg, index) => {
               setTimeout(() => {
-                this.snackBarService.open(msg, "Let's go", {duration: 1000});
+                this.snackBarService.showSuccess(msg, "Let's go", {duration: 1000});
               }, index * 1000);
             });
           } else {
-            this.snackBarService.open("Commande validée", "'Fait Plaisir !", {duration: 1000});
+            this.snackBarService.showSuccess("Commande validée", "'Fait Plaisir !", {duration: 1000});
             this.router.navigate(['/mes-commandes']);
           }
         });

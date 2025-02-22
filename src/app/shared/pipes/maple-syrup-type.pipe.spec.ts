@@ -1,4 +1,4 @@
-import { MapleSyrupTypePipe } from './maple-syrup-type.pipe';
+import {MapleSyrupTypePipe} from './maple-syrup-type.pipe';
 
 describe('MapleSyrupTypePipe', () => {
   it('create an instance', () => {

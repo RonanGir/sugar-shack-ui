@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {CartControllerClient} from '@api/cart-controller.client';
+import {CartControllerClient} from '@maple-orders-api//cart-controller.client';
 import {BehaviorSubject, map, Observable} from 'rxjs';
-import {CartItemModel} from '../models/cart-item.model';
+import {CartItemModel} from '@shared-models/cart-item.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,8 @@ export class CartService {
 
   getCartItems(cartId: number): Observable<CartItemModel[]> {
     return this.cartController.getCartItemsById(cartId)
-      .pipe(map(cartLines => cartLines.map(cartLine => ({...cartLine}))));
+      .pipe(
+        map(cartLines => cartLines.map(cartLine => ({...cartLine}))));
   }
 
   createCart(id: number): Observable<any> {

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {SnackbarService} from './snackbar.service';
-import {BackendErrorModel} from '../models/backend-error.model';
+import {BackendErrorModel} from '@shared-models/backend-error.model';
+import {SnackbarService} from '@shared-services/snackbar.service';
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
+import {SnackbarService} from '@shared-services/snackbar.service';
 
-import { SnackbarService } from './snackbar.service';
 
 describe('SnackbarService', () => {
   let service: SnackbarService;

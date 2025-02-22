@@ -1,12 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {MatTable, MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {CustomerService} from '../../shared/services/customer.service';
+import {Component} from '@angular/core';
+import {MatTable, MatTableModule} from '@angular/material/table';
 import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
-import {OrderModel} from '../../shared/models/order.model';
-import {OrderService} from '../../shared/services/order.service';
-import {switchMap} from 'rxjs';
-import {OrderStatusPipe} from '../../shared/pipes/order-status.pipe';
-import {CurrencyPipe, DatePipe} from '@angular/common';
+import {AsyncPipe, CurrencyPipe, DatePipe} from '@angular/common';
+import {catchError, Observable, of} from 'rxjs';
+import {OrderStatusPipe} from '@shared-pipes/order-status.pipe';
+import {OrderModel} from '@shared-models/order.model';
+import {OrderService} from '@shared-services/order.service';
+import {ErrorService} from '@shared-services/error.service';
 
 @UntilDestroy()
 @Component({
@@ -17,36 +17,29 @@ import {CurrencyPipe, DatePipe} from '@angular/common';
     MatTable,
     OrderStatusPipe,
     DatePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    AsyncPipe
   ],
   templateUrl: './customer-orders.component.html',
   styleUrl: './customer-orders.component.scss'
 })
-export class CustomerOrdersComponent implements OnInit {
+export class CustomerOrdersComponent {
 
   displayedColumns: string[] = ['id', 'totalPrice', 'status', 'updatedAt'];
-  dataSource = new MatTableDataSource<OrderModel>([]);
-  private currentCustomer: number | undefined;
+  dataSource$: Observable<OrderModel[]>;
 
   constructor(
     private orderService: OrderService,
-    private customerService: CustomerService
+    private errorService: ErrorService
   ) {
-  }
-
-  ngOnInit(): void {
-
-
-    this.customerService.getCurrentCustomer()
-      .pipe(switchMap(customer => {
-          this.currentCustomer = customer;
-          return this.orderService
-            .getOrdersByCustomer(customer);
+    this.dataSource$ = this.orderService.getCurrentCustomerOrder()
+      .pipe(
+        catchError(err => {
+          this.errorService.handleError(err);
+          return of(([]));
         }),
-        untilDestroyed(this))
-      .subscribe(catalogueItems => {
-        this.dataSource.data = catalogueItems;
-      });
+        untilDestroyed(this)
+      );
   }
 
 }

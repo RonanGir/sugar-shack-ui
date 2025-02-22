@@ -5,12 +5,23 @@
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "strict": true,
+    "baseUrl": "./",
     "paths": {
       "@app/*": [
-        "./app/*"
+        "src/app/*"
       ],
-      "@api/*": [
-        "./generated/maple-orders-api/api/*"
+      "@shared-services/*": [
+        "src/app/shared/services/*"
+      ],
+      "@shared-models/*": [
+        "src/app/shared/models/*"
+      ],
+      "@shared-pipes/*": [
+        "src/app/shared/pipes/*"
+      ],
+      "@maple-orders-api/*": [
+        "generated/maple-orders-api/api/*",
+        "generated/maple-orders-api/model/*"
       ]
     },
     "noImplicitOverride": true,
