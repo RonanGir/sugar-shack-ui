@@ -8,7 +8,11 @@ export class SnackbarService {
 
   constructor(private snackBar: MatSnackBar) {}
 
-  open(message: string, action: string = 'Fermer', config?: MatSnackBarConfig) {
+  showSuccess(message: string, action: string = 'Fermer', config?: MatSnackBarConfig) {
     this.snackBar.open(message, action, {...config});
+  }
+
+  showError(message: string, config?: MatSnackBarConfig) {
+    this.snackBar.open(message, 'Fermer', {...config});
   }
 }
