@@ -5,21 +5,21 @@ import {ProductDetailComponent} from './components/product-detail/product-detail
 import {CustomerOrdersComponent} from './components/customer-orders/customer-orders.component';
 
 export const routes: Routes = [
-  {path: '', redirectTo: 'produits', pathMatch: 'full'},
+  {path: '', redirectTo: '/produits', pathMatch: 'full'},
   {
     path: 'mon-panier',
     title: 'Mon panier',
-    component: CartComponent,
+    component: CartComponent
   },
   {
     path: 'mes-commandes',
     title: 'Mes commandes',
-    component: CustomerOrdersComponent,
+    component: CustomerOrdersComponent
   },
   {
     path: 'produits',
     title: 'Nos sirops',
-    component: CatalogueComponent,
+    component: CatalogueComponent
   }, {
     path: 'produits/:productId',
     title: "Détail d'un sirop",
@@ -28,6 +28,6 @@ export const routes: Routes = [
   {
     path: '**',
     title: 'Nos sirops',
-    component: CatalogueComponent,
+    component: CatalogueComponent
   }
 ];
